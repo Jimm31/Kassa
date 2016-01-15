@@ -1,0 +1,2 @@
+# Kassa
+Kassa for MikroBill
