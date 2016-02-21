@@ -1,0 +1,33 @@
+{% extends 'main_template.twig' %}
+{% block head %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/kassa/css/signin.css">
+{% endblock %}
+{% block navs %}
+{% endblock %}
+{% block content %}
+    {% if error == true %}
+        <div class="row">
+            <div class="col-sm-10 col-sm-offset-1">
+                <div class="alert alert-danger" role="alert"><strong>Ошибка!</strong> Неверно введен логин или
+                    пароль.
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    <form class="form-signin">
+        <h2 class="form-signin-heading">Авторизация</h2>
+        <label for="login" class="sr-only">Логин</label>
+        <input type="text" id="login" name="login" class="form-control" placeholder="Имя пользователя" required autofocus>
+        <label for="password" class="sr-only">Пароль</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Ваш пароль" required>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me">Запомнить меня</label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Вход</button>
+    </form>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

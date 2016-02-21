@@ -1,0 +1,25 @@
+<table class="table table-hover table-condensed table-fixed">
+    <thead>
+    <tr>
+        <th class="col-xs-8">Группа</th>
+        <th class="col-xs-1">Смс</th>
+        <th class="col-xs-1">Части</th>
+        <th class="col-xs-2">Сумма</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for message in messages %}
+    <tr>
+        <td class="col-xs-8">{{ message.group }}</td>
+        <td class="col-xs-1">{{ message.sms }}</td>
+        <td class="col-xs-1">{{ message.parts }}</td>
+        <td class="col-xs-2">{{ message.sum }}</td>
+    <tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr class="warning">
+        <td colspan="2" align="right">Всего: <b>{{ total }} Грн.</b></td>
+    </tr>
+    </tfoot>
+</table>

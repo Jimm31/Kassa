@@ -1,0 +1,504 @@
+{% extends 'main_template.twig' %}
+{% block head %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/kassa/css/bootstrap-datepicker3.min.css">
+{% endblock %}
+{% block content %}
+    <div class="row stat-{{ userInfo.state }}">
+        <div class="col-xs-12 col-md-4">
+            <div class="card" data-mh="info">
+                <legend>Личная информация</legend>
+                <table id="li">
+                    <tr>
+                        <td><i class="zmdi zmdi-case zmdi-hc-lg"></i>
+                            <span class="mg-10">Договор:</span>
+                        </td>
+                        <td><b>{{ userInfo.login }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-account-box zmdi-hc-lg"></i>
+                            <span class="mg-10">ФИО:</span>
+                        </td>
+                        <td><b>{{ userInfo.fio }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-home zmdi-hc-lg"></i>
+                            <span class="mg-10">Адрес:</span>
+                        </td>
+                        <td><b>{{ userInfo.address }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-city zmdi-hc-lg"></i>
+                            <span class="mg-10">Группа:</span>
+                        </td>
+                        <td><b>{{ userInfo.group }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-globe-alt zmdi-hc-lg"></i>
+                            <span class="mg-10">IP:</span>
+                        </td>
+                        <td><b><a href="http://{{ userInfo.ip }}">{{ userInfo.ip }}</a></b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-key zmdi-hc-lg"></i>
+                            <span class="mg-10">Пароль:</span>
+                        </td>
+                        <td><b>{{ userInfo.password }}</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-4">
+            <div class="card" data-mh="info">
+                <legend>Информация по тарифу</legend>
+                <table id="it">
+                    <tr>
+                        <td><i class="zmdi zmdi-balance-wallet zmdi-hc-lg"></i>
+                            <span class="mg-10">Баланс:</span>
+                        </td>
+                        <td>
+                            <b {% if  userInfo.ballance < 0 %} style="color: red"{% endif %} id="balance">
+                                {{ userInfo.ballance }}</b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-calendar-check zmdi-hc-lg"></i>
+                            <span class="mg-10">Работает с:</span>
+                        </td>
+                        <td><b>{{ userInfo.startDate }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-calendar-close zmdi-hc-lg"></i><span
+                                    class="mg-10">&nbsp;Работает до:</span>
+                        </td>
+                        <td><b>{{ userInfo.stopDate }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-receipt zmdi-hc-lg"></i>
+                            <span class="mg-10">Тариф:</span>
+                        </td>
+                        <td><b>{{ userInfo.tarif }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-money-box zmdi-hc-lg"></i>
+                            <span class="mg-10">Платёж:</span>
+                        </td>
+                        <td><b>{{ userInfo.paySize }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-balance zmdi-hc-lg"></i>
+                            <span class="mg-10">Об. платёж:</span>
+                        </td>
+                        <td><b>{{ userInfo.promisePay }}</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-4">
+            <div class="card" data-mh="info">
+                <legend>Информация по трафику</legend>
+                <table id="it">
+                    <tr>
+                        <td><i class="zmdi zmdi-block zmdi-hc-lg"></i>
+                            <span class="mg-10">Ограничение:</span>
+                        </td>
+                        <td><b>{{ userInfo.speedLimit }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-swap-vertical-circle zmdi-hc-lg"></i>
+                            <span class="mg-10">Тек. скорость:</span>
+                        </td>
+                        <td><b>{{ userInfo.currentSpeed }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-time-interval zmdi-hc-lg"></i>
+                            <span class="mg-10">За день:</span>
+                        </td>
+                        <td><b>{{ userInfo.trafficToday }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-time-interval zmdi-hc-lg"></i>
+                            <span class="mg-10">За месяц:</span>
+                        </td>
+                        <td><b>{{ userInfo.trafficMonth }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-time-interval zmdi-hc-lg"></i>
+                            <span class="mg-10">За все время:</span>
+                        </td>
+                        <td><b>{{ userInfo.allTraffic }}</b></td>
+                    </tr>
+                    <tr>
+                        <td><i class="zmdi zmdi-bike zmdi-hc-lg"></i>
+                            <span class="mg-10">Турбо:</span>
+                        </td>
+                        <td><b>{{ userInfo.turbo }}</b></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" id="control-btn">
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <a href="/kassa/user/edit/id/{{ userInfo.shortguid }}" class="btn btn-default btn-block"><i class="zmdi zmdi-edit"></i>&nbsp;Редактировать</a>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <a href="/kassa/user/addCash/user/{{ userInfo.login }}" class="btn btn-default btn-block
+            {% if cashier.canAddMoney == false %}
+            disabled
+            {% endif %}
+            " data-toggle="modal" data-target="#my" data-remote="false"><i class="zmdi zmdi-money"></i>&nbsp;Пополнить
+            </a>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <a href="/kassa/user/services/user/{{ userInfo.login }}" class="btn btn-default btn-block
+             {% if cashier.canManageServices == false %}
+            disabled
+            {% endif %}
+            " data-toggle="modal" data-target="#my" data-remote="false"><i class="zmdi zmdi-star"></i>&nbsp;Услуги</a>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <button class="btn btn-default btn-block"><i class="zmdi zmdi-comment-text"></i>&nbsp;Заявка</button>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <a href="/kassa/user/sendMessage/user/{{ userInfo.login }}" class="btn btn-default btn-block
+            {% if cashier.canSendMessages == false %}
+            disabled
+            {% endif %}
+            " data-toggle="modal" data-target="#my" data-remote="false"><i class="zmdi zmdi-email"></i>&nbsp;СМС</a>
+        </div>
+        <div class="col-xs-6 col-sm-4 col-md-2">
+            <button class="btn btn-default btn-block  {% if cashier.canOnOffUsers == false %}
+            disabled
+            {% endif %}
+            " onclick="onOff(this)">{% if userInfo.state == 'default' %}<span class="glyphicon glyphicon-play"></span>&nbsp;Включить{% else %}<span
+                        class="glyphicon glyphicon-stop"></span>&nbsp;Выключить{% endif %}</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card" id="traffChart">
+                <legend>Трафик за
+                    <span class="dropdown">
+                        <a href="#" class="dropdown-toggle" id="month" data-toggle="dropdown"
+                           role="button" aria-haspopup="true" aria-expanded="false" id="month">
+                            <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="ajax" value="1" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/1">январь</a></li>
+                        <li><a class="ajax" value="2" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/2">февраль</a></li>
+                        <li><a class="ajax" value="3" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/3">март</a></li>
+                        <li><a class="ajax" value="4" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/4">апрель</a></li>
+                        <li><a class="ajax" value="5" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/5">май</a></li>
+                        <li><a class="ajax" value="6" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/6">июнь</a></li>
+                        <li><a class="ajax" value="7" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/7">июль</a></li>
+                        <li><a class="ajax" value="8" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/8">август</a></li>
+                        <li><a class="ajax" value="9" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/9">сентябрь</a></li>
+                        <li><a class="ajax" value="10" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/10">октябрь</a></li>
+                        <li><a class="ajax" value="11" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/11">ноябрь</a></li>
+                        <li><a class="ajax" value="12" href="/kassa/user/trafficStat/user/{{ userInfo.shortguid }}/month/12">декабрь</a></li>
+                    </ul>
+                    </span>
+                </legend>
+                <div id="chart" style="height: 150px; width: 100%; margin: -15px">
+                    <div style="text-align: center;     padding:50px 49%">
+                        <div class="ispinner gray large animating">
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                            <div class="ispinner-blade"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="row">
+                    <h2 style="text-align: center">Движение средств</h2>
+                </div>
+                <div class="row" id="datepick">
+                    <form class="form-inline" role="form" action="/kassa/user/info/id/{{ userInfo.shortguid }}" method="get">
+                        <div class="form-group">
+                            <label for="start" class="sr-only">С</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">&nbsp;С&nbsp;</div>
+                                <input type="text" name="start" id="start" value="{{ start }}"
+                                       class="form-control datepicker"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="end" class="sr-only">По</label>
+                            <div class="input-group">
+                                <div class="input-group-addon">По</div>
+                                <input type="text" name="end" id="end" value="{{ end }}" class="form-control datepicker"/>
+                            </div>
+                        </div>
+                        <input type="hidden" name="id" value="{{ userInfo.shortguid }}">
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-default">Показать</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="row">
+                    <div class="col-lg-10 col-lg-offset-1 col-md-12 col-xs-12">
+                        <div class="table-responsive">
+                            <table class="table table-condensed table-hover table-bordered">
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Примечание</th>
+                                    <th class="col-md-1">Сумма</th>
+                                    <th class="col-md-1">Баланс</th>
+                                </tr>
+                                <tbody>
+                                {% for row in moneyInfo %}
+                                <tr {% if row.corrected ==1 %}class="warning" {% endif %} >
+                                    <td>{{ row.moneytime }}</td>
+                                    <td>{{ row.value1 }}</td>
+                                    <td>{{ row.cash }}</td>
+                                    <td>{{ row.actball }}</td>
+                                <tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <a href="javascript:window.history.go(-1);"><b>Назад</b></a>
+        </div>
+    </div>
+
+    <div class="modal fade user-action" id="my">
+        <div class="modal-dialog">
+            <div style="text-align: center;     padding:50px 49%">
+                <div class="ispinner white large animating">
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                    <div class="ispinner-blade"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script src="/kassa/js/mathHeight.js"></script>
+    <script src="/kassa/js/bootstrap-datepicker.min.js"></script>
+    <script src="/kassa/js/locales/bootstrap-datepicker.ru.min.js" charset="UTF-8"></script>
+    <script src="/kassa/js/jquery-ui.min.js" charset="UTF-8"></script>
+    <script>
+        $("#my").on("show.bs.modal", function (e) {
+            var link = $(e.relatedTarget);
+            $(this).find(".modal-dialog").load(link.attr("href"));
+        });
+        toastr.options.positionClass = 'toast-bottom-right';
+
+        $('.datepicker').datepicker({
+            format: "yyyy-mm-dd",
+            language: "ru",
+            autoclose: true,
+            todayHighlight: true,
+            orientation: "bottom auto"
+        });
+        function sendForm(id) {
+            var form = $('#' + id);
+            var params = form.serialize();
+            $.post(form.attr('action'), params, function (data) {
+                if (data.error == 0) {
+                    toastr[data.type](data.message);
+                } else {
+                    toastr['error']('Ошибка на сервере');
+                }
+            });
+            if (id == 'addCash') {
+                setTimeout(onChangeBalance, 6000);
+            }
+
+        }
+
+        function onChangeBalance() {
+            var balance = $('#balance');
+            balance.hide('puff', 300);
+            $.get('/kassa/user/balance/id/{{ userInfo.shortguid }}', function (data) {
+                balance.text(data);
+                balance.show('puff', 300);
+            })
+
+        }
+
+        function onOff(a) {
+            var b = $(a);
+            if (b.html() == '<span class="glyphicon glyphicon-play"></span>&nbsp;Включить') {
+                $.get('/kassa/user/onOff/on/1/user/{{ userInfo.login }}', function (data) {
+                    if (data.error == 0) {
+                        toastr[data.type](data.message);
+                        b.html('<span class="glyphicon glyphicon-stop"></span>&nbsp;Выключить');
+                    } else {
+                        toastr['error']('Ошибка на сервере');
+                    }
+                });
+            } else if (b.html() == '<span class="glyphicon glyphicon-stop"></span>&nbsp;Выключить') {
+                $.get('/kassa/user/onOff/on/0/user/{{ userInfo.login }}', function (data) {
+                    console.log(data.error);
+                    if (data.error == 0) {
+                        toastr[data.type](data.message);
+                        b.html('<span class="glyphicon glyphicon-play"></span>&nbsp;Включить');
+                    } else {
+                        toastr['error']('Ошибка на сервере');
+                    }
+                });
+            }
+        }
+    </script>
+    <script src="/kassa/js/jquery.flot.min.js"></script>
+    <script>
+        var chart = $('#chart');
+        var options = {
+            series: {
+                points: {
+                    show: true,
+                    radius: 3
+                },
+                lines: {
+                    show: true,
+                    fill: true
+
+                },
+                curvedLines: {
+                    apply: true
+
+                },
+                shadowSize: 1
+            },
+            grid: {
+                color: '#646464',
+                borderColor: 'transparent',
+                borderWidth: 20,
+                hoverable: true
+            },
+            xaxis: {
+                tickSize: 1,
+                tickDecimals: 0,
+                min: 1
+            },
+            yaxis: {
+                min: 0
+            }
+        };
+        var plot;
+
+
+        $('body').on('click', 'a.ajax', function (event) {
+            event.preventDefault();
+            var current = $(this);
+            $.get(current.attr('href'), function (data) {
+                var numberOfMonth = Number(current.attr('value'));
+                console.log(numberOfMonth);
+                var monthName = '';
+                switch (numberOfMonth) {
+                    case 1:
+                        monthName = 'январь';
+                        break;
+                    case 2:
+                        monthName = 'февраль';
+                        break;
+                    case 3:
+                        monthName = 'март';
+                        break;
+                    case 4:
+                        monthName = 'апрель';
+                        break;
+                    case 5:
+                        monthName = 'май';
+                        break;
+                    case 6:
+                        monthName = 'июнь';
+                        break;
+                    case 7:
+                        monthName = 'июль';
+                        break;
+                    case 8:
+                        monthName = 'август';
+                        break;
+                    case 9:
+                        monthName = 'сентябрь';
+                        break;
+                    case 10:
+                        monthName = 'октябрь';
+                        break;
+                    case 11:
+                        monthName = 'ноябрь';
+                        break;
+                    case 12:
+                        monthName = 'декабрь';
+                        break;
+                }
+                $('#month').html(monthName + '<span class="caret"></span>');
+
+                plot = $.plot(chart, data, options);
+            });
+        });
+
+        $("<div id='tooltip' class='card'></div>").css({
+            position: "absolute",
+            display: "none",
+            border: "1px solid #fdd",
+            padding: "2px",
+            "background-color": "#FFF"
+        }).appendTo("body");
+
+        chart.bind("plothover", function (event, pos, item) {
+            if (item) {
+                var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1].toFixed(2);
+
+                $("#tooltip").html(y + ' MB')
+                        .css({top: item.pageY - 20, left: item.pageX + 15})
+                        .fadeIn(200);
+            } else {
+                $("#tooltip").hide();
+            }
+        });
+
+        chart.bind("plotclick", function (event, pos, item) {
+            if (item) {
+                $("#clickdata").text(" - click point " + item.dataIndex + " in " + item.series.label);
+                plot.highlight(item.series, item.datapoint);
+            }
+        });
+
+        $(document).ready(function () {
+            $('.ajax').eq({{ month -1 }}).trigger('click');
+        });
+    </script>
+{% endblock %}

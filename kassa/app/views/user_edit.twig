@@ -1,0 +1,319 @@
+{% extends 'main_template.twig' %}
+
+{% block head %}
+    {{ parent() }}
+    <link rel="stylesheet" href="/kassa/css/bootstrap-datepicker3.min.css">
+    <style>.tab-pane{height: 300px}</style>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#info" data-toggle="tab">Информация по договору</a></li>
+                    <li><a href="#personal" data-toggle="tab">Персональная информация</a></li>
+                    <li><a href="#creditians" data-toggle="tab">Кредиты и опции</a></li>
+                </ul>
+                <form action="/kassa/user/save" method="post" class="form-horizontal" id="userForm">
+                    <div class="tab-content" id="usr-info-tab">
+                        <div class="tab-pane active" id="info">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="client" class="col-sm-3 control-label">Клиент</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="client" name="client" value="{{ user.client }}"
+                                                   pattern=".{2,}"
+                                                   required
+                                                   title="Название клиента должно быть больше двух символов">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="contract" class="col-sm-3 control-label">Договор</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="contract" name="contract" value="{{ user.contract }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="login" class="col-sm-3 control-label">Логин</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="login" name="login" value="{{ user.login }}">
+                                            <span class="input-group-btn"><button onclick="putRandomStr('login')" type="button"
+                                                                                  class="btn btn-default">
+                                                    <span class="glyphicon glyphicon-refresh"></span></button></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="password" class="col-sm-3 control-label">Пароль</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="password" name="password" value="{{ user.password }}">
+                                            <span class="input-group-btn"><button onclick="putRandomStr('password')" type="button"
+                                                                                  class="btn btn-default">
+                                                    <span class="glyphicon glyphicon-refresh"></span></button></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="group" class="col-sm-3 control-label">Группа</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" name="group" id="group" onchange="getLastFreeIp()">
+                                                {% for group in groups %}
+                                                    <option value="{{ group.id }}"
+                                                            {% if group.id == user.groupId %}selected{% endif %}>{{ group.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tariff" class="col-sm-3 control-label">Тариф</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" name="tariff" id="tariff">
+                                                {% for tariff in tariffs %}
+                                                    <option value="{{ tariff.id }}"
+                                                            {% if tariff.id == user.tariffId %}selected{% endif %}>{{ tariff.name }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="authorization" class="col-sm-3 control-label">Авторизация</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" name="authorization" id="authorization">
+                                                {% for authorization in authorizations %}
+                                                    <option value="{{ authorization }}"
+                                                            {% if authorization == user.authorization %}selected{% endif %}>{{ authorization }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="interface" class="col-sm-3 control-label">Интерфейс</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" name="interface" id="interface">
+                                                {% for interface in interfacesList %}
+                                                    <option value="{{ interface }}"
+                                                            {% if interface == user.interface %}selected{% endif %}>{{ interface }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ip" class="col-sm-3 control-label">IP</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="ip" name="ip"
+                                                       pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" placeholder="255.255.255.255"
+                                                       value="{{ user.ip }}">
+                                            <span class="input-group-btn"><button onclick="getLastFreeIp()" type="button" role="button"
+                                                                                  class="btn btn-default">
+                                                    <span class="glyphicon glyphicon-refresh"></span></button></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="mac" class="col-sm-3 control-label">MAC</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" name="mac" id="mac"
+                                                       pattern="^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$" placeholder="FF:FF:FF:FF:FF:FF"
+                                                       value="{{ user.mac }}"
+                                                       title="FF:FF:FF:FF:FF:FF">
+                                             <span class="input-group-btn"><button class="btn btn-default" type="button" onclick="javascript(0)">
+                                                     <span class="glyphicon glyphicon-refresh"></span></button></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="startDate" class="col-sm-3 control-label">Дата подкл.</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control datepicker" name="startDate" id="startDate"
+                                                       value="{{ user.startDate }}">
+                                             <span class="input-group-btn"><button class="btn btn-default" onclick="getToday('startDate')"
+                                                                                   type="button">
+                                                     <span class="glyphicon glyphicon-refresh"></span></button></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stopDate" class="col-sm-3 control-label">Дата откл.</label>
+                                        <div class="col-sm-9">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control datepicker" name="stopDate" id="stopDate"
+                                                       value="{{ user.stopDate }}">
+                                             <span class="input-group-btn"><button class="btn btn-default" onclick="getToday('stopDate')"
+                                                                                   type="button">
+                                                     <span class="glyphicon glyphicon-refresh"></span></button></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="personal">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="name" class="col-sm-3 control-label">ФИО</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="name" name="name" value="{{ user.fio }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="passport" class="col-sm-3 control-label">Паспорт</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="passport" name="passport" value="{{ user.passport }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone" class="col-sm-3 control-label">Телефон</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="phone" name="phone" value="{{ user.phone }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="note" class="col-sm-3 control-label">Примечание</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="note" name="note" value="{{ user.note }}">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="addressCon" class="col-sm-3 control-label">Адрес подкл.</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="addressCon" name="addressCon"
+                                                   value="{{ user.addressCon }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="address" class="col-sm-3 control-label">Адрес прож.</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="address" name="address" value="{{ user.address }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email" class="col-sm-3 control-label">Email</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="email" name="email" value="{{ user.email }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="creditians">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="personalPay" class="col-sm-3 control-label">Перс. плата</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name="personalPay" id="personalPay"
+                                                   value="{{ user.personalPay }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="payAlgorithm" class="col-sm-3 control-label">Алгоритм</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" name="payAlgorithm" id="payAlgorithm">
+                                                <option value='0' {% if user.creditAlgorithm == 0 %}selected{% endif %}>Как на тарифе</option>
+                                                <option value='1' {% if user.creditAlgorithm == 1 %}selected{% endif %}>Процент от заданного на тарифе
+                                                </option>
+                                                <option value='2' {% if user.creditAlgorithm == 2 %}selected{% endif %}>Абсолютное значение</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label for="personalCredit" class="col-sm-3 control-label">Перс. кредит</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" name="personalCredit" id="personalCredit"
+                                                   value="{{ user.personalCredit }}">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="creditAlgorithm" class="col-sm-3 control-label">Алгоритм</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control" name="creditAlgorithm" id="creditAlgorithm">
+                                                <option value='0' {% if user.creditAlgorithm == 0 %}selected{% endif %}>Как на тарифе</option>
+                                                <option value='1' {% if user.creditAlgorithm == 1 %}selected{% endif %}>Процент от заданного на тарифе
+                                                </option>
+                                                <option value='2' {% if user.creditAlgorithm == 2 %}selected{% endif %}>Абсолютное значение</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="oldLogin" value="{{ user.login }}">
+                    <div class="row">
+                        <div class="text-center ">
+                            <button class="btn btn-default" onclick="history.back()" type="button">Назад</button>
+                            <button class="btn btn-success" onclick="saveUser()" type="button">Сохранить</button>
+                        </div>
+                        <div class="text-center text-muted"><small>Внимание! Все три вкладки сохраняются сразу как одна. Нужно нажимать "сохранить" только один раз в конце редактирования.</small></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    {{ parent() }}
+    <script src="/kassa/js/bootstrap-datepicker.min.js"></script>
+    <script src="/kassa/js/locales/bootstrap-datepicker.ru.min.js" charset="UTF-8"></script>
+    <script>
+        $('.datepicker').datepicker({
+            format: "dd.mm.yyyy",
+            language: "ru",
+            autoclose: true,
+            todayHighlight: true,
+            orientation: "bottom auto"
+        });
+
+        function putRandomStr(id) {
+            var input = $('#' + id);
+            var text = "";
+            var possible = "abcdefghijklmnopqrstuvwxyz0123456789";
+            for (var i = 0; i < 5; i++)
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            input.val(text);
+        }
+
+        function getLastFreeIp() {
+            var groupId = $('#group :selected').val();
+            $.get('/kassa/user/getIp/group/' + groupId, function (data) {
+                $('#ip').val(data.ip)
+            });
+        }
+
+        function getToday(id) {
+            var input = $('#' + id);
+            var d = new Date();
+            var day = d.getDate();
+            var month = d.getMonth();
+            var year = d.getFullYear();
+            input.val(day + "." + month + "." + year);
+        }
+
+        function saveUser() {
+            var form = $('#userForm');
+            var params = form.serialize();
+            $.post(form.attr('action'), params, function (data) {
+                if (data.error == 0) {
+                    toastr[data.type](data.message);
+                } else {
+                    toastr['error']('Ошибка на сервере');
+                }
+            });
+        }
+    </script>
+{% endblock %}

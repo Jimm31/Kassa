@@ -1,0 +1,35 @@
+<table class="table table-hover table-condensed table-fixed" id="payers">
+    <thead>
+    <tr>
+        <th class="col-xs-10">Примечание</th>
+        <th class="col-xs-2">Сумма</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for payer in payers %}
+    <tr>
+        <td class="col-xs-10">{{ payer.name }}</td>
+        <td class="col-xs-2">{{ payer.sum }}</td>
+    <tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+    <tr class="warning">
+        <td colspan="2" align="right">Всего: <b>{{ total }} Грн.</b></td>
+    </tr>
+    </tfoot>
+</table>
+<script>
+    $("#fin").on("show.bs.modal", function (e) {
+        var action = e.relatedTarget;
+        $(this).find(".modal-dialog").load('/kassa/finance/' + action + '&startDate=' + $('#start').val() + '&endDate=' + $('#end').val() + '&groups=' + getGroups())});
+
+    $('#payers').find('tbody td:nth-child(1)').click(function () {
+        showPayerInfo($(this).text());
+    });
+
+    function showPayerInfo(payer) {
+        processData('modal-dialog');
+        $('#fin').modal('show', encodeURI('payerInfo?payer=' + payer));
+    }
+</script>

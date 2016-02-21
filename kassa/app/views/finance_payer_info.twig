@@ -1,0 +1,38 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <a href="#" data-dismiss="modal" aria-hidden="true"><i class="zmdi zmdi-download action-icon zmdi-hc-lg"></i></a>
+        <h4 class="modal-title"> {{ payments[0].payer }}</h4>
+    </div>
+    <div class="modal-body" >
+        <div class="table-responsive" style="max-height: 650px; overflow-y: scroll">
+            <table class="table table-condensed table-bordered table-striped" style="margin-bottom: 0px">
+                <thead>
+                <tr>
+                    <th class="col-xs-1">Логин</th>
+                    <th class="col-xs-4">Фио</th>
+                    <th class="col-xs-3 hidden-xs">Группа</th>
+                    <th class="col-xs-1">Сумма</th>
+                    <th class="col-xs-3">Время</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in payments %}
+                <tr>
+                    <td>{{ row.userLogin }}</td>
+                    <td>{{ row.userName }}</td>
+                    <td class="hidden-xs">{{ row.userGroup }}</td>
+                    <td>{{ row.sum }}</td>
+                    <td>{{ row.datetime }}</td>
+                <tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <table class="table table-condensed table-bordered">
+            <tr class="warning"><td align="right"><b>Всего: {{ total }} Грн.</b></td></tr>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+    </div>
+</div>
